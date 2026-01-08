@@ -1,18 +1,39 @@
-const targetDate = new Date(2040, 0, 1, 0, 0, 0).getTime();
+// index.js
+const targetDate = new Date(2040, 0, 1, 0, 0, 0);
 
 function updateCountdown() {
-    const now = new Date().getTime();
-    const diff = targetDate - now;
+    const now = new Date();
 
-    if (diff <= 0) {
+    if (now >= targetDate) {
         document.querySelector(".countdown").innerHTML = "Hotovo.";
         return;
     }
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
+    // Kalendářní rozdíl dní
+    let temp = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let days = 0;
+    while (temp < targetDate) {
+        days++;
+        temp.setDate(temp.getDate() + 1);
+    }
+
+    // Hodiny, minuty, sekundy (z aktuálního času)
+    let hours = targetDate.getHours() - now.getHours();
+    let minutes = targetDate.getMinutes() - now.getMinutes();
+    let seconds = targetDate.getSeconds() - now.getSeconds();
+
+    if (seconds < 0) {
+        seconds += 60;
+        minutes--;
+    }
+    if (minutes < 0) {
+        minutes += 60;
+        hours--;
+    }
+    if (hours < 0) {
+        hours += 24;
+        days--;
+    }
 
     document.getElementById("days").textContent = days;
     document.getElementById("hours").textContent = hours;
@@ -20,5 +41,6 @@ function updateCountdown() {
     document.getElementById("seconds").textContent = seconds;
 }
 
+// Spustit hned a pak každou sekundu
 updateCountdown();
 setInterval(updateCountdown, 1000);
